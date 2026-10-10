@@ -1,0 +1,14 @@
+# Batas versi minimum. Untuk MEREPRODUKSI hasil naskah pakai requirements-pinned.txt (Python 3.11).
+# Versi lama yang dipin di paper (numpy 1.26.4, pandas 2.2.2, scikit-learn 1.4.2, scipy 1.13.0,
+# statsmodels 0.14.2, scikit-fuzzy 0.4.2, matplotlib 3.8.4) ada di requirements-pinned.txt
+# dan butuh Python 3.9-3.11 (scikit-fuzzy 0.4.2 tidak berjalan di Python 3.12 ke atas).
+numpy>=1.26
+pandas>=2.2
+scikit-learn>=1.4
+scikit-fuzzy>=0.4.2
+scipy>=1.13
+statsmodels>=0.14
+matplotlib>=3.8
+PyYAML>=6.0
+openpyxl>=3.1
+pytest>=8.0

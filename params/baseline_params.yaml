@@ -1,0 +1,100 @@
+# Hyperparameter baseline, skema inisialisasi, aturan seed acak, dan versi library.
+# Menjawab Reviewer 2, Komentar 3. Dibaca langsung oleh src/batik_fahp_topsis/baselines.py dan
+# src/batik_fahp_topsis/clustering.py sehingga tidak ada pengaturan baseline yang di-hard-code
+# secara diam-diam.
+
+global:
+  random_state: 42          # grid gabungan full-data yang deterministik (Bagian 3.10)
+  n_bootstrap: 30             # jumlah repetisi bootstrap/run-berulang
+  n_init_main: 20              # jumlah start K-Means++ untuk grid gabungan utama
+  n_init_bootstrap: 10         # jumlah start K-Means++ per resample bootstrap
+  max_iter: 300
+
+kmeans:
+  init: "k-means++"
+  n_init: 20
+  max_iter: 300
+  random_state: 42
+  library: "scikit-learn==1.4.2"
+
+weighted_kmeans:
+  description: >
+    K-Means pada ruang fitur yang sama (sudah dinormalisasi Min-Max), dengan bobot kriteria
+    FAHP (atau FAHP Type-2) diterapkan langsung sebagai pengali jarak per-fitur, bukan hanya
+    dipakai untuk merangking/memilih fitur.
+  init: "k-means++"
+  n_init: 20
+  max_iter: 300
+  random_state: 42
+
+fcm:
+  fuzzy_exponent_m: 2.0
+  convergence_threshold: 1.0e-5
+  max_iter: 300
+  init: "random"
+  random_state: 42
+  library: "scikit-fuzzy==0.4.2"
+
+it2fcm:
+  description: >
+    Interval Type-2 FCM versi sederhana, sesuai implementasi it2fcm() di baselines.py: FCM
+    dijalankan dua kali (exponent bawah dan atas) untuk memperoleh lower dan upper membership,
+    lalu type reduction disederhanakan dengan merata-ratakan kedua matriks membership. Ini BUKAN
+    prosedur Karnik-Mendel penuh (tidak ada pencarian titik pindah / switch point).
+  fuzzy_exponent_m_lower: 1.6
+  fuzzy_exponent_m_upper: 2.4
+  convergence_threshold: 1.0e-5
+  max_iter: 300
+  init: "random"
+  random_state: 42                   # seed FCM lower; FCM upper memakai random_state + 1
+  type_reduction: "averaging of lower and upper memberships (simplified; not full Karnik-Mendel)"
+  hard_label_rule: "argmax of the averaged membership"
+  fou_definition: "mean width between upper and lower membership"
+  library: "custom wrapper in src/batik_fahp_topsis/baselines.py (it2fcm) calling scikit-fuzzy==0.4.2 cmeans"
+
+clara:
+  description: >
+    CLARA sesuai implementasi clara() di baselines.py: menarik n_samples sub-sampel acak, menjalankan
+    solver medoid ala PAM pada tiap sub-sampel, mengevaluasi medoid terhadap SELURUH data, dan
+    mempertahankan medoid dengan total jarak terendah. Solver PAM bersifat ringan (iterasi
+    pembaruan medoid per cluster, bukan pertukaran BUILD/SWAP penuh) dan tidak memakai
+    scikit-learn-extra.
+  n_samples: 5                       # jumlah sampel CLARA
+  sample_size_rule: "min(n, 40 + 2*k)"   # default standar PAM/CLARA
+  pam_max_iter: 100
+  distance: "euclidean"
+  random_state: 42                   # seed penarikan sampel; seed PAM sampel ke-s = random_state + s
+  library: "custom (src/batik_fahp_topsis/baselines.py: clara, _pam); scikit-learn pairwise_distances"
+
+dbscan:
+  # CATATAN: DBSCAN sudah dihapus dari naskah dan TIDAK dipakai pada tabel hasil mana pun.
+  # Fungsi run_dbscan() tetap ada di baselines.py hanya sebagai utilitas, tidak dipanggil pipeline.
+  eps: 0.5
+  min_samples: 5
+  selection_method: "k-distance elbow (k = min_samples)"
+  metric: "euclidean"
+  library: "scikit-learn==1.4.2"
+
+sequential_backward_selection:
+  scoring: "silhouette_coefficient"
+  direction: "backward (greedy)"
+  candidate_features: "15 indikator nonkonstan (C10 dikeluarkan karena varians nol)"
+  excluded_features: ["C10"]
+  k: "K terpilih (K = 5)"
+  floor_n_features: 7               # berhenti saat tersisa 7 fitur
+  kmeans: "k-means++, n_init = 20, max_iter = 300"
+  random_state: 42
+  library: "custom (src/batik_fahp_topsis/feature_selection.py:sequential_backward_selection)"
+
+environment:
+  # Versi yang dipakai penulis untuk menjalankan hasil naskah (Windows, `pip freeze`).
+  python: "3.11.9"
+  os: "Windows (angka runtime di Tabel 15 hanya untuk perbandingan relatif antarmetode pada satu mesin)"
+  numpy: "1.26.4"
+  pandas: "2.2.2"
+  scikit-learn: "1.4.2"
+  scikit-fuzzy: "0.4.2"
+  scipy: "1.13.0"
+  statsmodels: "0.14.2"
+  matplotlib: "3.8.4"
+  PyYAML: "6.0.1"

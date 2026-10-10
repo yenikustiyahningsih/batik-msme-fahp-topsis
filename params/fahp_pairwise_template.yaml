@@ -1,0 +1,41 @@
+# Template untuk matriks perbandingan berpasangan milik empat pakar atas 16 kriteria
+# (Bagian 3.3). Setiap pakar mengisi matriks 16x16 miliknya sendiri berisi judgment crisp
+# skala Saaty 1-9 (a_ij = seberapa lebih penting kriteria i dibanding kriteria j; a_ji = 1/a_ij).
+# Jika pakar mengizinkan pengungkapan, ganti matriks placeholder di bawah ini dengan judgment
+# pairwise asli sebelum mempublikasikan file ini (Reviewer 1, Komentar 8). Jika pengungkapan
+# tidak diizinkan, biarkan file ini hanya sebagai template struktural.
+
+criteria: [C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C13, C14, C15, C16]
+
+experts:
+  msme_office:
+    # matriks 16x16, row-major, skala Saaty 1-9 (matriks resiprokal: segitiga bawah = 1/atas)
+    pairwise_matrix: "REDACTED — isi dengan matriks perbandingan berpasangan 16x16 crisp milik pakar di sini"
+    consistency_ratio_reported: 0.052   # dari manuskrip Tabel 4
+
+  msme_owner:
+    pairwise_matrix: "REDACTED — isi dengan matriks perbandingan berpasangan 16x16 crisp milik pakar di sini"
+    consistency_ratio_reported: 0.057
+
+  batik_association:
+    pairwise_matrix: "REDACTED — isi dengan matriks perbandingan berpasangan 16x16 crisp milik pakar di sini"
+    consistency_ratio_reported: 0.050
+
+  academic:
+    pairwise_matrix: "REDACTED — isi dengan matriks perbandingan berpasangan 16x16 crisp milik pakar di sini"
+    consistency_ratio_reported: 0.059
+
+aggregation:
+  method: "rata-rata geometrik element-wise di antara keempat matriks pakar"
+  group_matrix_consistency_ratio_reported: 0.056
+  consistency_threshold: 0.10
+
+interval_type2_fuzzification:
+  description: >
+    Setiap judgment crisp hasil agregasi a_ij dipetakan ke bilangan fuzzy segitiga Interval
+    Type-2 dengan menerapkan faktor skala footprint-of-uncertainty (FOU) tetap di sekitar nilai
+    crisp untuk upper membership function (UMF), dan pita yang lebih sempit untuk lower
+    membership function (LMF), mengikuti representasi fuzzy Interval Type-2 yang dipakai pada
+    model keputusan fuzzy Interval Type-2 (ref manuskrip [10, 11]).
+  umf_fou_factor: 0.20
+  lmf_fou_factor: 0.10
