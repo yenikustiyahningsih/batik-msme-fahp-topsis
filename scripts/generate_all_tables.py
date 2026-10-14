@@ -83,6 +83,12 @@ def main():
     _run("run_topsis_priorities.py", shared_cfg + topsis_extra)
     _run("run_topsis_sensitivity.py", shared_cfg + topsis_extra)
     _run("run_runtime_benchmark.py", shared_cfg)
+    _run("run_cluster_figures.py", [
+        "--scaled-data", f"{outdir}/preprocessed_scaled.csv",
+        "--results", f"{outdir}/results_90_configs.csv",
+        "--selected-config", f"{outdir}/selected_configuration.json",
+        *common,
+    ])
 
     print(f"\nSemua tabel dan figure manuskrip ditulis ke '{outdir}/'.")
 

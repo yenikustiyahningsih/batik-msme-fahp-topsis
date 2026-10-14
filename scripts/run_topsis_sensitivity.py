@@ -17,6 +17,28 @@ from batik_fahp_topsis.topsis import sensitivity_summary
 COST_CRITERIA = ["C7"]
 
 
+from _figstyle import DPI, FIG_W, FONT, TITLE_FONT, wrap
+
+
+def plot_figure_06(table, outdir: Path, dpi: int = DPI, font: int = FONT) -> None:
+    """Figure 6: stabilitas prioritas TOPSIS (dengan judul pendek). Dibuat dari tabel yang sama dengan
+    Tabel 14, sehingga nilai gambar identik dengan tabel."""
+    labels = [str(x).replace("+/-", "\u00b1").replace("Bobot sama", "Equal\nweights") for x in table["scenario"]]
+    fig, ax = plt.subplots(figsize=(FIG_W, 2.9))
+    ax.plot(labels, table["mean_rho"], marker="o", label="Spearman rho")
+    ax.plot(labels, table["top3_overlap"], marker="s", label="Top-3 overlap")
+    ax.set_title(wrap("Stability of TOPSIS priorities under weight perturbation"), fontsize=TITLE_FONT)
+    ax.set_ylabel("Stability", fontsize=font)
+    ax.tick_params(labelsize=font)
+    ax.grid(color="0.9")
+    ax.set_axisbelow(True)
+    ax.set_ylim(0.78, 1.02)
+    ax.legend(fontsize=font, loc="lower left")
+    fig.tight_layout()
+    fig.savefig(outdir / "figure_06_topsis_sensitivity.png", dpi=dpi)
+    plt.close(fig)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--scaled-data", default="outputs/preprocessed_scaled.csv")
@@ -50,15 +72,7 @@ def main():
     table13 = sensitivity_summary(df_topsis, labels, features, w, COST_CRITERIA)
     table13.to_csv(outdir / "table_14_topsis_sensitivity.csv", index=False)
 
-    fig, ax = plt.subplots(figsize=(6, 4))
-    ax.plot(table13["scenario"], table13["mean_rho"], marker="o", label="Rata-rata Spearman rho")
-    ax.plot(table13["scenario"], table13["top3_overlap"], marker="s", label="Rata-rata overlap top-3")
-    ax.set_ylabel("Stabilitas")
-    ax.set_title("Stabilitas prioritas TOPSIS di bawah gangguan bobot FAHP Type-2")
-    ax.legend()
-    fig.tight_layout()
-    fig.savefig(outdir / "figure_06_topsis_sensitivity.png", dpi=150)
-    plt.close(fig)
+    plot_figure_06(table13, outdir)
 
     print(table13.to_string(index=False))
 

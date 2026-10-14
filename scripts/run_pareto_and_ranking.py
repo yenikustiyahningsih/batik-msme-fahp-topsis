@@ -1,4 +1,4 @@
-"""Tahap 4: efisiensi Pareto + seleksi mean-rank -> Tabel 5, Tabel 6, Figure 3.
+"""Tahap 4: efisiensi Pareto + seleksi mean-rank -> Tabel 5, Tabel 6 (Figure 3 dibuat di run_cluster_figures.py).
 
 Inilah kode yang dirujuk oleh caption/teks Tabel 5 versi revisi pada manuskrip: mean rank
 selalu dihitung atas populasi Pareto-efficient yang *lengkap*, dan subset "leading" yang
@@ -39,17 +39,7 @@ def main():
     leading = leading_subset(ranked, n=args.leading_n)
     leading.to_csv(outdir / "table_06_leading_configs.csv", index=False)
 
-    # Figure 3: scatter trade-off di antara kandidat leading (SC vs DBI, ukuran titik ~ CHI).
-    fig, ax = plt.subplots(figsize=(6, 5))
-    ax.scatter(leading["DBI"], leading["SC"], s=80)
-    for _, row in leading.iterrows():
-        ax.annotate(f"K={int(row['k'])}", (row["DBI"], row["SC"]))
-    ax.set_xlabel("Davies-Bouldin Index (makin rendah makin baik)")
-    ax.set_ylabel("Silhouette Coefficient (makin tinggi makin baik)")
-    ax.set_title("Trade-off di antara kandidat jumlah-cluster leading")
-    fig.tight_layout()
-    fig.savefig(outdir / "figure_03_tradeoff.png", dpi=150)
-    plt.close(fig)
+    # Figure 3 dibuat di run_cluster_figures.py, karena membutuhkan konfigurasi akhir yang terpilih.
 
     best = ranked.iloc[0]
     print(f"Konfigurasi Pareto-efficient dengan mean-rank terendah: N={int(best['n_features'])}, "

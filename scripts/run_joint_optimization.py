@@ -26,6 +26,30 @@ def composite_score(df: pd.DataFrame) -> pd.Series:
     return (sc_n + dbi_n + chi_n) / 3.0
 
 
+from _figstyle import DPI, FIG_W, FONT, TITLE_FONT, wrap
+
+
+def plot_figure_02(results_df, outdir: Path, dpi: int = DPI, font: int = FONT) -> None:
+    """Figure 2: heatmap skor komposit ternormalisasi di seluruh 90 konfigurasi (judul pendek di dalam gambar). Nilai pada baris fitur paling sedikit dicetak di dalam sel."""
+    pivot = results_df.pivot(index="n_features", columns="k", values="composite_score")
+    fig, ax = plt.subplots(figsize=(FIG_W, 3.1))
+    im = ax.imshow(pivot.values, aspect="auto", cmap="viridis")
+    ax.set_xticks(range(len(pivot.columns)), pivot.columns, fontsize=font)
+    ax.set_yticks(range(len(pivot.index)), pivot.index, fontsize=font)
+    ax.set_title(wrap("Normalized composite score across 90 configurations"), fontsize=TITLE_FONT)
+    ax.set_xlabel("Number of clusters K", fontsize=font)
+    ax.set_ylabel("Number of retained features", fontsize=font)
+    if FIG_W >= 5.5:  # pada lebar satu kolom, angka 10 pt akan saling menimpa
+        for j, value in enumerate(pivot.values[0]):
+            ax.text(j, 0, f"{value:.2f}", ha="center", va="center", fontsize=font, color="black")
+    cbar = fig.colorbar(im, ax=ax)
+    cbar.set_label("Composite score", fontsize=font)
+    cbar.ax.tick_params(labelsize=font)
+    fig.tight_layout()
+    fig.savefig(outdir / "figure_02_composite_score.png", dpi=dpi)
+    plt.close(fig)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--scaled-data", default="outputs/preprocessed_scaled.csv")
@@ -44,21 +68,7 @@ def main():
     results_df["composite_score"] = composite_score(results_df)
     results_df.to_csv(outdir / "results_90_configs.csv", index=False)
 
-    # Figure 2: heatmap skor komposit ternormalisasi di seluruh 90 konfigurasi.
-    pivot = results_df.pivot(index="n_features", columns="k", values="composite_score")
-    fig, ax = plt.subplots(figsize=(6, 5))
-    im = ax.imshow(pivot.values, aspect="auto", cmap="viridis")
-    ax.set_xticks(range(len(pivot.columns)))
-    ax.set_xticklabels(pivot.columns)
-    ax.set_yticks(range(len(pivot.index)))
-    ax.set_yticklabels(pivot.index)
-    ax.set_xlabel("Jumlah cluster K")
-    ax.set_ylabel("Jumlah fitur yang dipertahankan")
-    ax.set_title("Skor komposit ternormalisasi di seluruh 90 konfigurasi fitur-cluster gabungan")
-    fig.colorbar(im, ax=ax, label="Skor komposit")
-    fig.tight_layout()
-    fig.savefig(outdir / "figure_02_composite_score.png", dpi=150)
-    plt.close(fig)
+    plot_figure_02(results_df, outdir)
 
     print(f"Setiap konfigurasi N/K Pareto-efficient ada di {outdir / 'results_90_configs.csv'}")
 
