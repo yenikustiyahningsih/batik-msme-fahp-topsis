@@ -2,7 +2,7 @@
 
 [English](README.md) | Bahasa Indonesia
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23287436.svg)](https://doi.org/10.5281/zenodo.23287436)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23287435.svg)](https://doi.org/10.5281/zenodo.23287435)
 
 Repositori reproduksibilitas untuk naskah **Paper ID 20265381** (IJIES / INASS).
 
@@ -255,7 +255,7 @@ file hasil, bukan ditranskripsi manual antar tahap.
 
 ## Sitasi
 
-Jika memakai kode ini, mohon sitasi arsip Zenodo: https://doi.org/10.5281/zenodo.23287436
+Jika memakai kode ini, mohon sitasi arsip Zenodo: https://doi.org/10.5281/zenodo.23287435
 
 ## Lisensi
 
