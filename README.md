@@ -1,264 +1,263 @@
 # Joint Feature and Cluster Optimization with Type-2 FAHP-Guided Feature Selection and TOPSIS for Robust Batik MSME Prioritization
 
-[Bahasa Indonesia](README.id.md) | English
+[English](README.md) | Bahasa Indonesia
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23287436.svg)](https://doi.org/10.5281/zenodo.23287436)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23287435.svg)](https://doi.org/10.5281/zenodo.23287435)
 
-Reproducibility repository for manuscript **Paper ID 20265381** (IJIES / INASS).
+Repositori reproduksibilitas untuk naskah **Paper ID 20265381** (IJIES / INASS).
 
-This repository contains the computational pipeline used to produce the tables and figures of the
-manuscript: preprocessing, Type-2 FAHP criterion weighting, joint feature-cluster optimization
-(90-configuration grid), Pareto efficiency and mean-rank selection, bootstrap stability analysis,
-baseline comparison (CLARA, FCM, IT2FCM, weighted K-Means), statistical significance tests,
-ablation analysis, fuzzy-specific validity, cluster-specific TOPSIS, and TOPSIS sensitivity analysis.
+Repositori ini berisi pipeline komputasi yang dipakai untuk menghasilkan tabel dan figure di
+naskah: preprocessing, pembobotan kriteria FAHP Type-2, optimasi gabungan fitur-cluster (grid
+90 konfigurasi), efisiensi Pareto dan seleksi mean-rank, analisis stabilitas bootstrap,
+perbandingan baseline (CLARA, FCM, IT2FCM, weighted K-Means), uji signifikansi statistik, analisis
+ablasi, validitas khusus-fuzzy, TOPSIS per-cluster, dan analisis sensitivitas TOPSIS.
 
-> **Data confidentiality.** The original Batik MSME data (848 MSMEs, 16 indicators) are commercially
-> confidential and are **not** included (see the Data Availability statement in the manuscript).
-> The repository provides an **anonymized synthetic example dataset** (`data/example_data.csv`,
-> created by `scripts/generate_example_data.py`) with the same schema and plausible value ranges,
-> so the whole pipeline can be run end to end without the original data. Results on the example
-> data **do not match the manuscript numbers**; only the workflow is identical. To reproduce the
-> manuscript numbers, an authorized copy of the original data with the same schema
-> (see `data/schema.md`) is required.
+> **Kerahasiaan data.** Data MSME Batik asli (848 MSME, 16 indikator) bersifat rahasia secara
+> komersial dan **tidak** disertakan (lihat pernyataan Data Availability di naskah). Repositori ini
+> menyediakan **dataset contoh sintetis anonim** (`data/example_data.csv`, dibuat oleh
+> `scripts/generate_example_data.py`) dengan skema dan rentang nilai yang masuk akal, sehingga
+> seluruh pipeline bisa dijalankan dari awal sampai akhir tanpa data asli. Hasil pada data contoh
+> **tidak sama dengan angka di naskah**; hanya alurnya yang sama. Untuk mereproduksi angka naskah
+> diperlukan salinan resmi data asli dengan skema yang sama (lihat `data/schema.md`).
 
-## Key results from the manuscript
+## Hasil utama naskah
 
-The numbers below are the headline results reported in the manuscript, computed on the original
-confidential data (848 Batik MSMEs, 16 indicators). Running the pipeline on the public example
-data gives different numbers; see the note above.
+Angka di bawah adalah hasil utama yang dilaporkan di naskah, dihitung pada data asli yang bersifat
+rahasia (848 MSME Batik, 16 indikator). Menjalankan pipeline pada data contoh publik menghasilkan
+angka yang berbeda; lihat catatan di atas.
 
 <p align="center">
-  <img src="docs/figures/figure_01_framework.png" alt="Figure 1. Proposed framework" width="380"><br>
-  <em>Figure 1. Proposed joint feature-cluster optimization and MSME prioritization framework.</em>
+  <img src="docs/figures/figure_01_framework.png" alt="Figure 1. Kerangka usulan" width="380"><br>
+  <em>Figure 1. Kerangka optimasi gabungan fitur-cluster dan prioritisasi MSME.</em>
 </p>
 
-### 1. Joint feature-cluster selection
+### 1. Seleksi gabungan fitur-cluster
 
-The grid covers 10 feature counts (7 to 16) and 9 cluster numbers (K = 2 to 10), i.e. 90
-configurations, each scored with Silhouette (SC), Davies-Bouldin (DBI) and Calinski-Harabasz (CHI).
-Seven configurations are Pareto-efficient, and all of them keep the same seven Type-2 FAHP-ordered
-indicators: **C1, C3, C7, C6, C4, C5, C9**.
+Grid mencakup 10 jumlah fitur (7 sampai 16) dan 9 jumlah cluster (K = 2 sampai 10), yaitu 90
+konfigurasi, masing-masing dinilai dengan Silhouette (SC), Davies-Bouldin (DBI), dan
+Calinski-Harabasz (CHI). Tujuh konfigurasi efisien Pareto, dan semuanya mempertahankan tujuh
+indikator yang sama menurut urutan FAHP Type-2: **C1, C3, C7, C6, C4, C5, C9**.
 
-| K | SC / DBI / CHI | Mean rank (Table 6) | Bootstrap ARI / NMI (Table 7) |
+| K | SC / DBI / CHI | Mean rank (Tabel 6) | ARI / NMI bootstrap (Tabel 7) |
 |---|---|---|---|
-| 2 | 0.4449 / 1.0828 / 547.2 | 4.67 | 1.0000 / 1.0000 |
-| **5 (selected)** | **0.4598 / 1.0583 / 441.7** | **4.33** | **0.9762 / 0.9709** |
-| 6 | 0.4937 / 0.9285 / 412.3 | 3.00 | 0.8716 / 0.9108 |
-| 7 | 0.5016 / 1.0357 / 397.3 | 3.67 | 0.7920 / 0.8651 |
-| 8 | 0.5258 / 0.9840 / 391.7 | 3.33 | 0.8069 / 0.8634 |
-| 9 | 0.5371 / 1.0926 / 383.0 | 5.00 | 0.8440 / 0.8873 |
-| 10 | 0.5533 / 1.0518 / 366.2 | 4.00 | 0.8622 / 0.8718 |
+| 2 | 0,4449 / 1,0828 / 547,2 | 4,67 | 1,0000 / 1,0000 |
+| **5 (terpilih)** | **0,4598 / 1,0583 / 441,7** | **4,33** | **0,9762 / 0,9709** |
+| 6 | 0,4937 / 0,9285 / 412,3 | 3,00 | 0,8716 / 0,9108 |
+| 7 | 0,5016 / 1,0357 / 397,3 | 3,67 | 0,7920 / 0,8651 |
+| 8 | 0,5258 / 0,9840 / 391,7 | 3,33 | 0,8069 / 0,8634 |
+| 9 | 0,5371 / 1,0926 / 383,0 | 5,00 | 0,8440 / 0,8873 |
+| 10 | 0,5533 / 1,0518 / 366,2 | 4,00 | 0,8622 / 0,8718 |
 
-K = 6 has the lowest mean rank, but K = 5 is the first candidate in mean-rank order that reaches a
-bootstrap ARI of at least 0.90 (30 resamples) with usable cluster sizes, so it is the final
-configuration. K = 2 is perfectly stable but too coarse. The final clusters contain 82, 343, 109,
-174 and 140 MSMEs.
+K = 6 punya mean rank terendah, tetapi K = 5 adalah kandidat pertama (menurut urutan mean rank) yang
+mencapai ARI bootstrap minimal 0,90 (30 resampel) dengan ukuran cluster yang layak, sehingga
+menjadi konfigurasi akhir. K = 2 sangat stabil tetapi terlalu kasar. Cluster akhir berisi 82, 343,
+109, 174, dan 140 MSME.
 
 <table>
   <tr>
-    <td align="center"><img src="docs/figures/figure_02_composite_score.png" alt="Figure 2" width="340"><br><em>Figure 2. Composite score over the 90 configurations</em></td>
-    <td align="center"><img src="docs/figures/figure_03_tradeoff.png" alt="Figure 3" width="340"><br><em>Figure 3. Trade-off among the seven-feature K candidates</em></td>
+    <td align="center"><img src="docs/figures/figure_02_composite_score.png" alt="Figure 2" width="340"><br><em>Figure 2. Skor komposit 90 konfigurasi</em></td>
+    <td align="center"><img src="docs/figures/figure_03_tradeoff.png" alt="Figure 3" width="340"><br><em>Figure 3. Trade-off kandidat K pada tujuh fitur</em></td>
   </tr>
   <tr>
-    <td align="center"><img src="docs/figures/figure_04_centroid_profiles.png" alt="Figure 4" width="340"><br><em>Figure 4. Normalized centroid profiles of the five clusters</em></td>
-    <td align="center"><img src="docs/figures/figure_05_cluster_distribution.png" alt="Figure 5" width="340"><br><em>Figure 5. Distribution of MSMEs across the five clusters</em></td>
+    <td align="center"><img src="docs/figures/figure_04_centroid_profiles.png" alt="Figure 4" width="340"><br><em>Figure 4. Profil centroid ternormalisasi lima cluster</em></td>
+    <td align="center"><img src="docs/figures/figure_05_cluster_distribution.png" alt="Figure 5" width="340"><br><em>Figure 5. Sebaran MSME pada lima cluster</em></td>
   </tr>
 </table>
 
-### 2. Comparison with other clustering methods (Table 8)
+### 2. Perbandingan dengan metode clustering lain (Tabel 8)
 
-Single fit on the same seven features with K = 5, with no independent tuning of the comparators.
+Satu kali fit pada tujuh fitur yang sama dengan K = 5, tanpa tuning independen untuk pembanding.
 
-| Method | SC / DBI / CHI |
+| Metode | SC / DBI / CHI |
 |---|---|
-| Proposed (K-Means) | 0.4598 / 1.0583 / 441.7 |
-| CLARA | 0.4574 / 0.9809 / 372.7 |
-| FCM | 0.4514 / 1.1627 / 428.4 |
-| IT2FCM | 0.4544 / 1.1276 / 432.4 |
-| Weighted K-Means, Type-1 FAHP weights | not evaluated (valid Type-1 weights unavailable) |
-| Weighted K-Means, Type-2 FAHP weights | 0.4381 / 1.1592 / 405.2 |
+| Usulan (K-Means) | 0,4598 / 1,0583 / 441,7 |
+| CLARA | 0,4574 / 0,9809 / 372,7 |
+| FCM | 0,4514 / 1,1627 / 428,4 |
+| IT2FCM | 0,4544 / 1,1276 / 432,4 |
+| K-Means berbobot, bobot FAHP Type-1 | tidak dievaluasi (bobot Type-1 yang valid tidak tersedia) |
+| K-Means berbobot, bobot FAHP Type-2 | 0,4381 / 1,1592 / 405,2 |
 
-Friedman tests (Table 9, 30 bootstrap replicates, five evaluable methods) are significant for SC
-(chi-square 88.77), DBI (69.55) and CHI (97.04), with 4/4 Holm-adjusted Wilcoxon comparisons
-significant per metric. Bootstrap replicates overlap, so the p-values are descriptive, not
-independent external validation. CLARA reaches a lower DBI than the proposed partition.
+Uji Friedman (Tabel 9, 30 replikasi bootstrap, lima metode yang dapat dievaluasi) signifikan untuk
+SC (chi-square 88,77), DBI (69,55), dan CHI (97,04), dengan 4/4 perbandingan Wilcoxon terkoreksi
+Holm signifikan pada tiap metrik. Replikasi bootstrap saling tumpang tindih, sehingga nilai p
+bersifat deskriptif, bukan validasi eksternal independen. CLARA mencapai DBI lebih rendah daripada
+partisi usulan.
 
-### 3. Ablation (Table 10, K = 5)
+### 3. Ablasi (Tabel 10, K = 5)
 
-| Variant | Setting | SC / DBI / CHI |
+| Varian | Pengaturan | SC / DBI / CHI |
 |---|---|---|
-| A1 | All 16 indicators | 0.2964 / 1.4026 / 167.2 |
-| A2 | FAHP (Type-1) seven features | not evaluated |
-| A3 | Type-2 FAHP seven features (proposed) | 0.4598 / 1.0583 / 441.7 |
-| A4 | Type-1 weighted, 16 indicators | not evaluated |
-| A5 | Type-2 weighted, 16 indicators | 0.1801 / 2.0980 / 133.5 |
-| A6 | Seven features + Type-1 weights | not evaluated |
-| A7 | Seven features + Type-2 weights | 0.4381 / 1.1592 / 405.2 |
-| A8 | Random seven-feature subsets (mean of 100) | 0.3434 / 1.2601 / 299.1 |
-| A9 | Sequential backward selection (SBS), seven features | 0.5747 / 0.9047 / 510.0 |
+| A1 | Seluruh 16 indikator | 0,2964 / 1,4026 / 167,2 |
+| A2 | Tujuh fitur menurut FAHP (Type-1) | tidak dievaluasi |
+| A3 | Tujuh fitur menurut FAHP Type-2 (usulan) | 0,4598 / 1,0583 / 441,7 |
+| A4 | Berbobot Type-1, 16 indikator | tidak dievaluasi |
+| A5 | Berbobot Type-2, 16 indikator | 0,1801 / 2,0980 / 133,5 |
+| A6 | Tujuh fitur + bobot Type-1 | tidak dievaluasi |
+| A7 | Tujuh fitur + bobot Type-2 | 0,4381 / 1,1592 / 405,2 |
+| A8 | Subset acak tujuh fitur (rata-rata 100) | 0,3434 / 1,2601 / 299,1 |
+| A9 | Sequential backward selection (SBS), tujuh fitur | 0,5747 / 0,9047 / 510,0 |
 
-The expert-guided subset clearly beats all 16 indicators and random subsets, but SBS is stronger on
-all three internal indices. The expert-guided subset was kept for stakeholder relevance; no
-policy advantage was measured.
+Subset berbasis pakar jelas lebih baik daripada 16 indikator dan subset acak, tetapi SBS lebih kuat
+pada ketiga indeks internal. Subset berbasis pakar dipertahankan demi relevansi bagi pemangku
+kepentingan; keunggulan kebijakan tidak diukur.
 
-### 4. Fuzzy-specific validity (Table 11, K = 5)
+### 4. Validitas khusus-fuzzy (Tabel 11, K = 5)
 
 | Model | PC | PE | XB | FOU |
 |---|---|---|---|---|
-| FCM | 0.5771 | 0.8684 | 0.2647 | - |
-| IT2FCM | 0.4309 | 1.0783 | 0.9284 | 0.2283 |
+| FCM | 0,5771 | 0,8684 | 0,2647 | - |
+| IT2FCM | 0,4309 | 1,0783 | 0,9284 | 0,2283 |
 
-The interval type-2 formulation adds an explicit uncertainty band but does not improve these fuzzy
-validity indices.
+Formulasi interval type-2 menambahkan pita ketidakpastian yang eksplisit, tetapi tidak memperbaiki
+indeks validitas fuzzy ini.
 
-### 5. Cluster-specific TOPSIS and sensitivity (Table 14)
+### 5. TOPSIS per-cluster dan sensitivitas (Tabel 14)
 
-TOPSIS scores are computed inside each cluster and are not comparable across clusters. The
-priorities stay stable when the weights of C1, C3 and C7 are perturbed:
+Skor TOPSIS dihitung di dalam tiap cluster dan tidak dapat dibandingkan antar cluster. Prioritas
+tetap stabil ketika bobot C1, C3, dan C7 diganggu:
 
-| Scenario | Mean Spearman rho | Min rho | Top-3 overlap |
+| Skenario | Rata-rata Spearman rho | Rho minimum | Overlap top-3 |
 |---|---|---|---|
-| +/-5% | 0.9962 | 0.9763 | 92.1% |
-| +/-10% | 0.9859 | 0.8469 | 88.9% |
-| +/-15% | 0.9726 | 0.7729 | 86.5% |
-| Equal weights | 0.8283 | 0.6962 | 83.7% |
+| +/-5% | 0,9962 | 0,9763 | 92,1% |
+| +/-10% | 0,9859 | 0,8469 | 88,9% |
+| +/-15% | 0,9726 | 0,7729 | 86,5% |
+| Bobot sama | 0,8283 | 0,6962 | 83,7% |
 
 <p align="center">
-  <img src="docs/figures/figure_06_topsis_sensitivity.png" alt="Figure 6. Stability of TOPSIS priorities" width="420"><br>
-  <em>Figure 6. Stability of TOPSIS priorities under weight perturbation.</em>
+  <img src="docs/figures/figure_06_topsis_sensitivity.png" alt="Figure 6. Stabilitas prioritas TOPSIS" width="420"><br>
+  <em>Figure 6. Stabilitas prioritas TOPSIS terhadap gangguan bobot.</em>
 </p>
 
-### What these results do and do not show
+### Apa yang ditunjukkan dan tidak ditunjukkan hasil ini
 
-- All validity evidence is internal (SC, DBI, CHI, bootstrap ARI/NMI). No external validation or
-  independent expert assessment was performed.
-- Type-2 FAHP is an unvalidated design choice. The experts' pairwise matrices are not released, so
-  valid Type-1 weights are unavailable and no Type-1 versus Type-2 comparison is reported.
-- The comparison with CLARA, FCM, IT2FCM and weighted K-Means is descriptive: the methods were not
-  independently tuned and no post-2024 method was included, so no claim of comparative
-  effectiveness is made.
-- Policy interpretability of the expert-guided subset was not measured.
+- Seluruh bukti validitas bersifat internal (SC, DBI, CHI, ARI/NMI bootstrap). Tidak ada validasi
+  eksternal atau penilaian pakar independen.
+- FAHP Type-2 adalah pilihan desain yang belum tervalidasi. Matriks perbandingan berpasangan pakar
+  tidak dirilis, sehingga bobot Type-1 yang valid tidak tersedia dan tidak ada perbandingan Type-1
+  versus Type-2.
+- Perbandingan dengan CLARA, FCM, IT2FCM, dan K-Means berbobot bersifat deskriptif: metode tidak
+  di-tuning secara independen dan tidak ada metode pasca-2024, sehingga tidak ada klaim keunggulan
+  komparatif.
+- Interpretabilitas kebijakan dari subset berbasis pakar tidak diukur.
 
-## Quick start
+## Cara mulai cepat
 
-Use **Python 3.11** (the manuscript results were produced with 3.11.9). Python 3.12 or newer is not
-supported because `scikit-fuzzy 0.4.2` depends on the removed `imp` and `distutils` modules.
+Pakai **Python 3.11** (hasil naskah dibuat dengan 3.11.9). Python 3.12 ke atas tidak didukung karena
+`scikit-fuzzy 0.4.2` membutuhkan modul `imp` dan `distutils` yang sudah dihapus.
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements-pinned.txt
 
-# Optional: regenerate the anonymized example dataset
+# Opsional: bangun ulang dataset contoh anonim
 python scripts/generate_example_data.py
 
-# Run the whole pipeline on the example data
+# Jalankan seluruh pipeline pada data contoh
 python scripts/generate_all_tables.py --data data/example_data.csv --outdir outputs
 ```
 
-- `requirements-pinned.txt`: exact versions used in the manuscript. Use this to reproduce results.
-- `requirements.txt`: minimum version bounds for general use; numbers may shift slightly.
+- `requirements-pinned.txt`: versi persis yang dipakai di naskah. Pakai ini untuk mereproduksi hasil.
+- `requirements.txt`: batas versi minimum untuk pemakaian umum; angka bisa bergeser sedikit.
 
-The run takes a few minutes and prints little during the bootstrap stage; do not interrupt it.
-Each `outputs/table_*.csv` corresponds to one manuscript table and each `outputs/figure_*.png` to
-one figure. `outputs/results_90_configs.csv` is the single authoritative results file from which
-all other tables and figures are derived. A detailed run guide (in Indonesian) is in
-`CARA_MENJALANKAN.md`.
+Proses memakan beberapa menit dan hampir tidak mencetak apa pun saat tahap bootstrap; jangan
+dihentikan. Setiap `outputs/table_*.csv` berkorespondensi dengan satu tabel naskah dan setiap
+`outputs/figure_*.png` dengan satu figure. `outputs/results_90_configs.csv` adalah satu-satunya file
+hasil otoritatif; semua tabel dan figure lain diturunkan dari file ini. Panduan menjalankan yang
+lebih rinci ada di `CARA_MENJALANKAN.md`.
 
-## Repository structure
+## Struktur repositori
 
 ```
 batik-msme-fahp-topsis/
 ├── README.md / README.id.md
-├── CARA_MENJALANKAN.md            # detailed run guide (Indonesian)
-├── requirements.txt               # minimum version bounds
-├── requirements-pinned.txt        # exact versions used in the manuscript
+├── CARA_MENJALANKAN.md            # panduan menjalankan yang rinci
+├── requirements.txt               # batas versi minimum
+├── requirements-pinned.txt        # versi persis yang dipakai di naskah
 ├── data/
-│   ├── schema.md                  # data dictionary for C1-C16, imputation and scaling rules
-│   └── example_data.csv           # anonymized synthetic example (not real MSME data)
+│   ├── schema.md                  # kamus data C1-C16, aturan imputasi dan penskalaan
+│   └── example_data.csv           # contoh sintetis anonim (bukan data MSME asli)
 ├── params/
-│   ├── baseline_params.yaml       # baseline hyperparameters, seeds, library versions
-│   ├── fahp_pairwise_template.yaml# template for the four experts' pairwise matrices
-│   └── paper_table3_weights.csv   # Type-2 FAHP weights reported in Table 3
+│   ├── baseline_params.yaml       # hyperparameter baseline, seed, versi library
+│   ├── fahp_pairwise_template.yaml# template matriks perbandingan berpasangan 4 pakar
+│   └── paper_table3_weights.csv   # bobot FAHP Type-2 pada Tabel 3
 ├── src/batik_fahp_topsis/
-│   ├── preprocessing.py           # KNN imputation, Min-Max scaling, data-quality audit
-│   ├── fahp.py                    # Type-2 FAHP and conventional (Type-1) FAHP weighting
-│   ├── feature_selection.py       # FAHP-ranked subsets, random subsets, SBS
+│   ├── preprocessing.py           # imputasi KNN, penskalaan Min-Max, audit kualitas data
+│   ├── fahp.py                    # pembobotan FAHP Type-2 dan FAHP konvensional (Type-1)
+│   ├── feature_selection.py       # subset hasil ranking FAHP, subset acak, SBS
 │   ├── validity_metrics.py        # SC, DBI, CHI, PC, PE, XB, FOU
-│   ├── clustering.py              # joint K-Means grid search
-│   ├── baselines.py               # CLARA, FCM, IT2FCM, weighted K-Means (see note below)
-│   ├── pareto.py                  # Pareto efficiency + equal-weight mean-rank selection
-│   ├── bootstrap.py               # bootstrap resampling, ARI/NMI stability
-│   ├── statistical_tests.py       # Friedman, Wilcoxon with Holm correction, rank-biserial effect size
-│   ├── topsis.py                  # cluster-specific TOPSIS + sensitivity / stress test
-│   └── reproducibility.py         # centralized seed control
-├── scripts/                       # one run_*.py per analysis stage, plus generate_all_tables.py
+│   ├── clustering.py              # grid search gabungan K-Means
+│   ├── baselines.py               # CLARA, FCM, IT2FCM, weighted K-Means (lihat catatan)
+│   ├── pareto.py                  # efisiensi Pareto + seleksi mean-rank berbobot sama
+│   ├── bootstrap.py               # resampling bootstrap, stabilitas ARI/NMI
+│   ├── statistical_tests.py       # Friedman, Wilcoxon dengan koreksi Holm, ukuran efek rank-biserial
+│   ├── topsis.py                  # TOPSIS per-cluster + sensitivitas / uji tekanan
+│   └── reproducibility.py         # kontrol seed terpusat
+├── scripts/                       # satu run_*.py per tahap analisis, plus generate_all_tables.py
 ├── tests/test_metrics.py
-├── docs/figures/                  # figures shown in the README (figures 2-6: copies of outputs/figure_*.png)
-└── outputs/                       # created at runtime
+├── docs/figures/                  # gambar yang ditampilkan di README (figure 2-6: salinan outputs/figure_*.png)
+└── outputs/                       # dibuat saat runtime
 ```
 
-## Mapping to the manuscript
+## Pemetaan ke naskah
 
-| Manuscript item | Script | Output file(s) |
+| Item naskah | Script | File keluaran |
 |---|---|---|
-| Tables 3, 4 (Type-2 FAHP weights, expert CR) | `run_fahp_weights.py` | `table_03_fahp_weights.csv`, `table_04_expert_cr.csv` |
-| Tables 6, 7 (Pareto set, mean rank, bootstrap ARI/NMI + SD) | `run_pareto_and_ranking.py`, `run_bootstrap_stability.py` | `table_06_leading_configs.csv`, `table_07_pareto_bootstrap.csv`, `table_07_bootstrap_per_repetition.csv` |
-| Figure 2 (composite-score heatmap) | `run_joint_optimization.py` | `figure_02_composite_score.png` |
-| Figures 3, 4, 5 (trade-off scatter, centroid profiles, cluster distribution) | `run_cluster_figures.py` | `figure_03_tradeoff.png`, `figure_04_centroid_profiles.png`, `figure_05_cluster_distribution.png` |
-| Table 8 (baseline comparison) | `run_baseline_comparison.py` | `table_08_baseline_comparison.csv` |
-| Table 9 (Friedman / Wilcoxon-Holm) | `run_statistical_tests.py` | `table_09_statistical_tests.csv`, `table_09_holm_wilcoxon_{SC,DBI,CHI}.csv` |
-| Table 10 (ablation) | `run_ablation.py` | `table_10_ablation.csv` |
-| Table 11 (fuzzy-specific validity) | `run_fuzzy_validity.py` | `table_11_fuzzy_validity.csv` |
-| Table 12 (final cluster distribution) | `run_bootstrap_stability.py` | `table_12_cluster_distribution.csv` |
-| Table 13 (TOPSIS priorities) | `run_topsis_priorities.py` | `table_13_topsis_priorities.csv` |
-| Table 14, Figure 6 (TOPSIS sensitivity) | `run_topsis_sensitivity.py` | `table_14_topsis_sensitivity.csv`, `figure_06_topsis_sensitivity.png` |
-| Table 15 (runtime) | `run_runtime_benchmark.py` | `table_15_runtime.csv` |
+| Tabel 3, 4 (bobot FAHP Type-2, CR pakar) | `run_fahp_weights.py` | `table_03_fahp_weights.csv`, `table_04_expert_cr.csv` |
+| Tabel 6, 7 (himpunan Pareto, mean rank, ARI/NMI bootstrap + SD) | `run_pareto_and_ranking.py`, `run_bootstrap_stability.py` | `table_06_leading_configs.csv`, `table_07_pareto_bootstrap.csv`, `table_07_bootstrap_per_repetition.csv` |
+| Figure 2 (heatmap skor komposit) | `run_joint_optimization.py` | `figure_02_composite_score.png` |
+| Figure 3, 4, 5 (scatter trade-off, profil centroid, distribusi cluster) | `run_cluster_figures.py` | `figure_03_tradeoff.png`, `figure_04_centroid_profiles.png`, `figure_05_cluster_distribution.png` |
+| Tabel 8 (perbandingan baseline) | `run_baseline_comparison.py` | `table_08_baseline_comparison.csv` |
+| Tabel 9 (Friedman / Wilcoxon-Holm) | `run_statistical_tests.py` | `table_09_statistical_tests.csv`, `table_09_holm_wilcoxon_{SC,DBI,CHI}.csv` |
+| Tabel 10 (ablasi) | `run_ablation.py` | `table_10_ablation.csv` |
+| Tabel 11 (validitas khusus-fuzzy) | `run_fuzzy_validity.py` | `table_11_fuzzy_validity.csv` |
+| Tabel 12 (distribusi cluster akhir) | `run_bootstrap_stability.py` | `table_12_cluster_distribution.csv` |
+| Tabel 13 (prioritas TOPSIS) | `run_topsis_priorities.py` | `table_13_topsis_priorities.csv` |
+| Tabel 14, Figure 6 (sensitivitas TOPSIS) | `run_topsis_sensitivity.py` | `table_14_topsis_sensitivity.csv`, `figure_06_topsis_sensitivity.png` |
+| Tabel 15 (runtime) | `run_runtime_benchmark.py` | `table_15_runtime.csv` |
 
-On the example data, tables that contain business names (for example Table 13) are not produced.
+Pada data contoh, tabel yang memuat nama usaha (misalnya Tabel 13) tidak dihasilkan.
 
-## Baseline parameters
+## Parameter baseline
 
-All baseline hyperparameters, initialization schemes, random-seed rules, and library versions are
-recorded in `params/baseline_params.yaml` and read directly by
-`src/batik_fahp_topsis/baselines.py`, so no baseline setting is hard-coded in the analysis scripts.
+Semua hyperparameter baseline, skema inisialisasi, aturan seed acak, dan versi library dicatat di
+`params/baseline_params.yaml` dan dibaca langsung oleh `src/batik_fahp_topsis/baselines.py`,
+sehingga tidak ada pengaturan baseline yang di-hard-code di script analisis.
 
-## Random seeds and reproducibility
+## Seed acak dan reproduksibilitas
 
-`src/batik_fahp_topsis/reproducibility.py` centralizes every random seed (`random_state = 42` for
-the deterministic full-data grid; distinct, recorded seeds for each bootstrap repetition).
-`scripts/generate_all_tables.py` is the single authoritative entry point: it calls each stage in
-order from the same `results_90_configs.csv`, so Pareto status, ranks, the selected configuration,
-bootstrap statistics, and every manuscript table are generated automatically from one results
-file rather than transcribed by hand between stages.
+`src/batik_fahp_topsis/reproducibility.py` memusatkan setiap seed acak (`random_state = 42` untuk
+grid full-data yang deterministik; seed berbeda dan tercatat untuk setiap repetisi bootstrap).
+`scripts/generate_all_tables.py` adalah satu-satunya titik masuk otoritatif: ia memanggil setiap
+tahap secara berurutan dari `results_90_configs.csv` yang sama, sehingga status Pareto, rank,
+konfigurasi terpilih, statistik bootstrap, dan setiap tabel naskah dihasilkan otomatis dari satu
+file hasil, bukan ditranskripsi manual antar tahap.
 
-## Notes
+## Catatan
 
-- Table numbering: `table_NN_*.csv` follows the manuscript table numbers. Tables 1, 2, and 5
-  (related work, missing values, experimental settings) are not program outputs; experimental
-  settings are in `params/baseline_params.yaml`. Only Figure 1 (framework diagram) is not generated by
-  this repository; it is provided as `docs/figures/figure_01_framework.png`.
-- SBS (Table 10, A9) uses the 15 nonconstant indicators; C10 (zero variance) is excluded, as for
-  the random subsets (A8).
-- IT2FCM uses a simplified type reduction (averaging the lower and upper memberships) rather than
-  full Karnik-Mendel; CLARA uses a self-written PAM-style medoid solver. Both are described in
+- Penomoran: `table_NN_*.csv` mengikuti nomor tabel naskah. Tabel 1, 2, dan 5 (studi terkait, nilai
+  hilang, pengaturan eksperimen) bukan keluaran program; pengaturan eksperimen ada di
+  `params/baseline_params.yaml`. Hanya Figure 1 (diagram kerangka) yang tidak dihasilkan oleh repositori ini; tersedia sebagai `docs/figures/figure_01_framework.png`.
+- SBS (Tabel 10, A9) memakai 15 indikator nonkonstan; C10 (varians nol) dikeluarkan, sama seperti
+  subset acak (A8).
+- IT2FCM memakai reduksi tipe sederhana (rata-rata membership bawah dan atas), bukan Karnik-Mendel
+  penuh; CLARA memakai solver medoid ala PAM buatan sendiri. Keduanya dijelaskan di
   `params/baseline_params.yaml`.
-- `run_dbscan()` remains in `baselines.py` only as a utility. DBSCAN was removed from the manuscript
-  and is not called by the pipeline.
-- The experts' individual pairwise comparison matrices are not released, so valid conventional (Type-1)
-  FAHP weights are unavailable. In this code the Type-1 weights stay empty (NaN) and are never replaced
-  by Type-2 weights. The Type-1 weighted K-Means baseline (Table 8) and ablation rows A2, A4 and A6
-  (Table 10) are therefore reported as "not evaluated". The repository gives no evidence of a Type-2
-  advantage; Type-2 FAHP is treated as an unvalidated design choice (Section 4.10).
-- Friedman statistics and runtimes can differ slightly across operating systems and machines. The
-  manuscript numbers were produced on Windows with Python 3.11.9 and the versions in
-  `requirements-pinned.txt`.
+- `run_dbscan()` tetap ada di `baselines.py` hanya sebagai utilitas. DBSCAN sudah dihapus dari
+  naskah dan tidak dipanggil pipeline.
+- Matriks perbandingan berpasangan pakar yang asli tidak dirilis, sehingga bobot FAHP konvensional (Type-1)
+  yang valid tidak tersedia. Pada kode ini bobot Type-1 dibiarkan kosong (NaN) dan tidak pernah diganti dengan
+  bobot Type-2. Baseline K-Means berbobot Type-1 (Tabel 8) serta baris ablasi A2, A4, dan A6 (Tabel 10)
+  karena itu dilaporkan "not evaluated". Repositori ini tidak memberi bukti keunggulan Type-2; Type-2 FAHP
+  diperlakukan sebagai pilihan desain yang belum tervalidasi (Bagian 4.10).
+- Statistik Friedman dan runtime dapat sedikit berbeda antar sistem operasi dan mesin. Angka naskah
+  berasal dari Windows, Python 3.11.9, dengan versi library di `requirements-pinned.txt`.
 
-## Citation
+## Sitasi
 
-If you use this code, please cite the Zenodo archive: https://doi.org/10.5281/zenodo.23287436
+Jika memakai kode ini, mohon sitasi arsip Zenodo: https://doi.org/10.5281/zenodo.23287435
 
-## License
+## Lisensi
 
-MIT License (see `LICENSE`). The anonymized example dataset is synthetic and may be freely
-distributed; the original MSME dataset is confidential and is not included here.
+Lisensi MIT (lihat `LICENSE`). Dataset contoh anonim bersifat sintetis dan boleh didistribusikan
+bebas; dataset MSME asli bersifat rahasia dan tidak disertakan di sini.
