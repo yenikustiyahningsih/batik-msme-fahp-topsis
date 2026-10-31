@@ -35,15 +35,17 @@ menekan Ctrl+C. Semua tabel (`table_03` sampai `table_15`, nomor file = nomor ta
 gambar (`figure_*.png`) muncul di folder `outputs/`.
 
 Angka kunci yang harus muncul pada Cara B: K=5 dengan 7 fitur; ARI 0,9762 (SD 0,0340) dan NMI 0,9709;
-SBS (A9) SC 0,5747 / DBI 0,9047 / CHI 510,0; statistik Friedman DBI 84,08 (Windows). Waktu
+SBS (A9) SC 0,5747 / DBI 0,9047 / CHI 510,0; statistik Friedman DBI 69,55 (Windows; lima metode yang dapat dievaluasi, W-KM Type-1 dikecualikan). Waktu
 komputasi (Tabel 15) bergantung pada mesin.
 
 ## Catatan penting
 - `--weights-csv` memakai bobot FAHP Type-2 pada Tabel 3 naskah. Tanpa opsi ini program memakai matriks
   pakar ACAK (placeholder), sehingga bobot dan fitur terpilih tidak sama dengan naskah.
-- Matriks perbandingan berpasangan tiap pakar tidak dirilis. Bobot FAHP konvensional (Type-1) karena itu
-  disamakan dengan bobot Type-2 pada kode ini, sehingga perbandingan "FAHP biasa vs Type-2" (Tabel 8, 9,
-  10) tidak memberi bukti keunggulan Type-2. Hal ini juga dinyatakan di naskah (Bagian 4.10).
+- Matriks perbandingan berpasangan tiap pakar tidak dirilis, sehingga bobot FAHP konvensional (Type-1) yang
+  valid tidak tersedia. Pada kode ini bobot Type-1 dibiarkan kosong (NaN) dan tidak pernah diganti dengan
+  bobot Type-2. Baseline K-Means berbobot Type-1 (Tabel 8) serta baris ablasi A2, A4, dan A6 (Tabel 10)
+  karena itu dilaporkan "not evaluated". Repositori ini tidak memberi bukti keunggulan Type-2; Type-2 FAHP
+  diperlakukan sebagai pilihan desain yang belum tervalidasi (Bagian 4.10).
 - Data asli tidak punya kolom C10 (konstan); kolom ditambahkan otomatis sebagai konstanta dan
   dikeluarkan dari subset acak serta SBS (15 indikator nonkonstan).
 - `--imputed data/batik_imputed_frozen.csv` memakai hasil imputasi KNN yang dibekukan agar angka sama di

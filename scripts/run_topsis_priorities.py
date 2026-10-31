@@ -1,4 +1,3 @@
-
 """Tahap 10: prioritas TOPSIS khusus per-cluster -> Tabel 12."""
 from __future__ import annotations
 
@@ -15,10 +14,10 @@ from batik_fahp_topsis.topsis import cluster_specific_topsis
 COST_CRITERIA = ["C7"]
 
 
-def count_tied_rows(values) -> int:
-    """Menghitung jumlah baris yang nilainya muncul lebih dari sekali."""
-    frequencies = values.value_counts()
-    return int((values.map(frequencies) > 1).sum())
+def tied_row_mask(values):
+    """True untuk setiap baris yang nilainya juga muncul pada baris lain
+    dalam kelompok yang sama (mask per baris, bukan hitungan per kelompok)."""
+    return values.duplicated(keep=False)
 
 
 def main():
@@ -222,16 +221,16 @@ def main():
     # 8. Diagnosis ties dalam setiap cluster.
     rank_tie_mask = priorities.groupby(
         "cluster", sort=False
-    )["rank_within_cluster"].transform(count_tied_rows) > 1
+    )["rank_within_cluster"].transform(tied_row_mask).astype(bool)
 
     exact_score_tie_mask = priorities.groupby(
         "cluster", sort=False
-    )["topsis_score"].transform(count_tied_rows) > 1
+    )["topsis_score"].transform(tied_row_mask).astype(bool)
 
     rounded_scores = priorities["topsis_score"].round(10)
     rounded_score_tie_mask = rounded_scores.groupby(
         priorities["cluster"], sort=False
-    ).transform(count_tied_rows) > 1
+    ).transform(tied_row_mask).astype(bool)
 
     print(f"Konfigurasi clustering: K={k}, fitur={len(features)}")
     print(

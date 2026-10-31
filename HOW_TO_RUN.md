@@ -37,17 +37,18 @@ Ctrl+C. All tables (`table_03` to `table_15`; file number = manuscript table num
 (`figure_*.png`) appear in the `outputs/` folder.
 
 Key numbers that should appear for Option B: K=5 with 7 features; ARI 0.9762 (SD 0.0340) and NMI
-0.9709; SBS (A9) SC 0.5747 / DBI 0.9047 / CHI 510.0; Friedman statistic for DBI 84.08 (Windows).
+0.9709; SBS (A9) SC 0.5747 / DBI 0.9047 / CHI 510.0; Friedman statistic for DBI 69.55 (Windows; five evaluable methods, Type-1 W-KM excluded).
 Computation time (Table 15) depends on the machine.
 
 ## Important notes
 - `--weights-csv` uses the Type-2 FAHP weights from Table 3 of the manuscript. Without this option
   the program uses RANDOM expert matrices (a placeholder), so the weights and selected features
   will not match the manuscript.
-- The experts' individual pairwise comparison matrices are not released. The conventional (Type-1)
-  FAHP weights are therefore set equal to the Type-2 weights in this code, so the "conventional
-  FAHP vs Type-2" comparison (Tables 8, 9, 10) does not provide evidence of a Type-2 advantage.
-  This is also stated in the manuscript (Section 4.10).
+- The experts' individual pairwise comparison matrices are not released, so valid conventional (Type-1)
+  FAHP weights are unavailable. In this code the Type-1 weights stay empty (NaN) and are never replaced
+  by Type-2 weights. The Type-1 weighted K-Means baseline (Table 8) and ablation rows A2, A4 and A6
+  (Table 10) are therefore reported as "not evaluated". The repository gives no evidence of a Type-2
+  advantage; Type-2 FAHP is treated as an unvalidated design choice (Section 4.10).
 - The original data have no C10 column (constant); the column is added automatically as a constant
   and excluded from the random subsets and SBS (15 nonconstant indicators).
 - `--imputed data/batik_imputed_frozen.csv` uses the frozen KNN imputation result so that the

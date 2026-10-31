@@ -1,8 +1,7 @@
-
 """Tahap 8: analisis ablasi -> Tabel 10.
 
-A4 dan A6 membutuhkan bobot FAHP Type-1. Jika bobot tersebut tidak
-tersedia atau mengandung NaN, kedua konfigurasi ditandai not_evaluated.
+A2, A4, dan A6 membutuhkan bobot FAHP Type-1. Jika bobot tersebut tidak
+tersedia atau mengandung NaN, ketiga konfigurasi ditandai not_evaluated.
 Bobot Type-2 tidak digunakan sebagai pengganti bobot Type-1.
 """
 from __future__ import annotations
@@ -215,16 +214,37 @@ def main():
         rows, "A1", "All 16", X_all, labels_all
     )
 
-    # A2 / A3: subset yang sama sesuai implementasi pipeline saat ini.
+    # A3: subset terpilih oleh urutan bobot Type-2 (pipeline utama).
     X_sel = df_scaled[features].to_numpy(dtype=float)
     _, labels_selected = fit_kmeans(X_sel, k)
 
     add_evaluated_row(
-        rows, "A2", "FAHP FS7", X_sel, labels_selected
-    )
-    add_evaluated_row(
         rows, "A3", "Type-2 FS7", X_sel, labels_selected
     )
+
+    # A2: subset yang dipilih oleh urutan bobot FAHP Type-1.
+    # Subset Type-2 TIDAK boleh dipakai ulang di sini (hasilnya akan
+    # identik dengan A3 dan bukan perbandingan Type-1 yang valid).
+    if full_type1_available:
+        order = sorted(
+            range(len(ALL_CRITERIA)),
+            key=lambda i: (-full_type1_raw[i], i),
+        )
+        features_t1 = [ALL_CRITERIA[i] for i in order[:n_features]]
+        X_t1 = df_scaled[features_t1].to_numpy(dtype=float)
+        _, labels_t1 = fit_kmeans(X_t1, k)
+        add_evaluated_row(
+            rows, "A2", "FAHP FS7", X_t1, labels_t1
+        )
+    else:
+        add_unavailable_row(
+            rows,
+            "A2",
+            "FAHP FS7",
+            "Bobot FAHP Type-1 tidak tersedia atau mengandung "
+            "NaN; urutan fitur Type-1 tidak dapat dibentuk, "
+            "konfigurasi tidak dievaluasi.",
+        )
 
     # A4: bobot FAHP Type-1 pada seluruh 16 fitur.
     if full_type1_available:
@@ -334,7 +354,11 @@ def main():
         rows, "A9", "SBS FS7", X_sbs, labels_sbs
     )
 
-    table9 = pd.DataFrame(rows)
+    table9 = (
+        pd.DataFrame(rows)
+        .sort_values("variant", kind="stable")
+        .reset_index(drop=True)
+    )
     output_path = outdir / "table_10_ablation.csv"
     table9.to_csv(output_path, index=False)
 
