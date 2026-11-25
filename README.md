@@ -226,12 +226,27 @@ recorded in `params/baseline_params.yaml` and read directly by
 
 ## Random seeds and reproducibility
 
-`src/batik_fahp_topsis/reproducibility.py` centralizes every random seed (`random_state = 42` for
-the deterministic full-data grid; a distinct, recorded seed for each bootstrap repetition).
-`scripts/generate_all_tables.py` is the single authoritative entry point: it calls each stage in
-order from the same `results_90_configs.csv`, so the Pareto status, ranks, selected configuration,
-bootstrap statistics, and every manuscript table are generated automatically from one results file
-rather than transcribed manually between stages.
+`src/batik_fahp_topsis/reproducibility.py` centralizes the random seeds.
+
+- Full-data configuration grid and single full-data fits of the comparison
+  methods: `random_state = 42` (deterministic).
+- The 30 repeated runs / bootstrap resamples form one loop over replicates
+  b = 0, 1, ..., 29. Replicate b uses the seed `42 * 1000 + b` (42000 to 42029)
+  to draw its bootstrap sample and to initialize its K-Means fit.
+- CLARA, FCM and IT2FCM keep `random_state = 42` in every resample; the
+  random seven-feature subsets of the ablation use seed 42, CLARA sample s uses
+  `42 + s`, and the IT2FCM upper-membership fit uses seed 43.
+
+The aggregate 90-configuration results reported in the manuscript are provided
+in `results/results_90_configs_reported.csv` (aggregate metrics only; no
+MSME-level data). The original enterprise-level data and the individual expert
+pairwise-comparison matrices are not distributed.
+
+`scripts/generate_all_tables.py` is the single entry point that calls each stage
+in order from one `results_90_configs.csv`, so the Pareto status, ranks, selected
+configuration, bootstrap statistics, and manuscript tables are generated from one
+results file. Regenerating the reported numbers requires an authorized copy of
+the original data.
 
 ## Notes
 

@@ -226,12 +226,26 @@ sehingga tidak ada pengaturan baseline yang di-hard-code di script analisis.
 
 ## Seed acak dan reproduksibilitas
 
-`src/batik_fahp_topsis/reproducibility.py` memusatkan setiap seed acak (`random_state = 42` untuk
-grid full-data yang deterministik; seed berbeda dan tercatat untuk setiap repetisi bootstrap).
-`scripts/generate_all_tables.py` adalah satu-satunya titik masuk otoritatif: ia memanggil setiap
-tahap secara berurutan dari `results_90_configs.csv` yang sama, sehingga status Pareto, rank,
-konfigurasi terpilih, statistik bootstrap, dan setiap tabel naskah dihasilkan otomatis dari satu
-file hasil, bukan ditranskripsi manual antar tahap.
+`src/batik_fahp_topsis/reproducibility.py` memusatkan seed acak.
+
+- Grid konfigurasi full-data dan fit tunggal full-data metode pembanding:
+  `random_state = 42` (deterministik).
+- 30 run berulang / resample bootstrap merupakan satu loop atas replikasi
+  b = 0, 1, ..., 29. Replikasi b memakai seed `42 * 1000 + b` (42000 sampai 42029)
+  untuk menarik sampel bootstrap dan menginisialisasi fit K-Means-nya.
+- CLARA, FCM, dan IT2FCM tetap memakai `random_state = 42` di setiap resample;
+  subset acak tujuh fitur pada ablasi memakai seed 42, sampel CLARA ke-s memakai
+  `42 + s`, dan fit membership atas IT2FCM memakai seed 43.
+
+Hasil agregat 90 konfigurasi yang dilaporkan dalam naskah tersedia di
+`results/results_90_configs_reported.csv` (hanya metrik agregat; tanpa data
+tingkat UMKM). Data asli tingkat perusahaan dan matriks perbandingan berpasangan
+masing-masing pakar tidak didistribusikan.
+
+`scripts/generate_all_tables.py` adalah satu titik masuk yang memanggil setiap
+tahap secara berurutan dari satu `results_90_configs.csv`, sehingga status Pareto,
+rank, konfigurasi terpilih, statistik bootstrap, dan tabel naskah dihasilkan dari
+satu file hasil. Mereproduksi angka yang dilaporkan memerlukan salinan resmi data asli.
 
 ## Catatan
 
